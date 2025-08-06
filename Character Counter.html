@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enhanced Text Counter</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f7f8;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    textarea {
+      width: 100%;
+      height: 180px;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+
+    .info {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .char-count.warning {
+      color: red;
+    }
+
+    #emoji {
+      font-size: 24px;
+      margin-top: 10px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #2575fc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1a5be7;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Live Text Stats</h2>
+    <textarea id="inputText" placeholder="Type here (max 250 chars)..."></textarea>
+    
+    <div class="info">
+      <div id="wordCount">Words: 0</div>
+      <div id="charCount" class="char-count">Characters: 0</div>
+    </div>
+
+    <div id="emoji">🙂</div>
+
+    <button onclick="downloadText()">Download Text</button>
+  </div>
+
+  <script>
+    const textarea = document.getElementById('inputText');
+    const charCount = document.getElementById('charCount');
+    const wordCount = document.getElementById('wordCount');
+    const emoji = document.getElementById('emoji');
+
+    textarea.addEventListener('input', () => {
+      let text = textarea.value;
+
+      // Limit input to 250 characters
+      if (text.length > 250) {
+        text = text.slice(0, 250);
+        textarea.value = text;
+      }
+
+      const chars = text.length;
+      const words = text.trim().split(/\s+/).filter(Boolean).length;
+
+      charCount.textContent = 'Characters: ' + chars;
+      wordCount.textContent = 'Words: ' + (text.trim() ? words : 0);
+
+      // Warning color
+      charCount.classList.toggle('warning', chars > 200);
+
+      // Mood emoji
+      if (words === 0) emoji.textContent = '😶';
+      else if (words <= 5) emoji.textContent = '🙂';
+      else if (words <= 10) emoji.textContent = '😃';
+      else emoji.textContent = '🤓';
+    });
+
+    function downloadText() {
+      const text = textarea.value;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'my_text.txt';
+      link.click();
+    }
+  </script>
+
+</body>
+</html>
